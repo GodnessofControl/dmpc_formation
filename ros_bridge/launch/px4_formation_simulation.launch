@@ -1,0 +1,162 @@
+<launch>
+    <!-- PX4/Gazebo Multi-UAV Formation Simulation with DMPC Controller -->
+    
+    <!-- Simulation parameters -->
+    <arg name="ns" default="formation"/>
+    <arg name="world" default="empty"/>  <!-- empty, baylands, warehouse -->
+    <arg name="gui" default="true"/>
+    
+    <!-- Number of UAVs -->
+    <arg name="n_uavs" default="4"/>
+    
+    <!-- Vehicle positions in ENU frame (Gazebo) -->
+    <!-- Leader (UAV1) at origin, followers at formation offsets -->
+    <arg name="uav1_x" default="0"/>
+    <arg name="uav1_y" default="0"/>
+    <arg name="uav1_z" default="0.5"/>
+    
+    <arg name="uav2_x" default="-10"/>
+    <arg name="uav2_y" default="-27"/>
+    <arg name="uav2_z" default="0.5"/>
+    
+    <arg name="uav3_x" default="-20"/>
+    <arg name="uav3_y" default="22"/>
+    <arg name="uav3_z" default="0.5"/>
+    
+    <arg name="uav4_x" default="-30"/>
+    <arg name="uav4_y" default="-10"/>
+    <arg name="uav4_z" default="0.5"/>
+    
+    <!-- MAVROS ports (base + instance*10) -->
+    <arg name="mavlink_udp_port" default="14560"/>
+    <arg name="mavlink_tcp_port" default="4560"/>
+    
+    <!-- PX4 instances configuration -->
+    <!-- Each instance needs: model, x, y, z, roll, pitch, yaw, instance -->
+    
+    <!-- ==================== GAZEBO SETUP ==================== -->
+    
+    <!-- Set Gazebo env vars -->
+    <env name="GAZEBO_MODEL_PATH" value="/home/demo/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models:$(env GAZEBO_MODEL_PATH)"/>
+    <env name="GAZEBO_RESOURCE_PATH" value="/home/demo/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/worlds:$(env GAZEBO_RESOURCE_PATH)"/>
+    
+    <!-- World file -->
+    <arg name="world_file" value="/home/demo/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/worlds/$(arg world).world"/>
+    
+    <!-- Gazebo server -->
+    <node name="gazebo" pkg="gazebo_ros" type="gzserver" 
+          args="$(arg world_file) --verbose"
+          respawn="false" output="screen" required="true"/>
+    
+    <!-- Gazebo client -->
+    <node if="$(arg gui)" name="gazebo_gui" pkg="gazebo_ros" type="gzclient"
+          respawn="false" output="screen"/>
+    
+    <!-- ==================== UAV SPAWNING ==================== -->
+    
+    <!-- UAV 1 (Leader) -->
+    <group ns="uav1">
+        <!-- PX4 SITL -->
+        <node name="px4_1" pkg="px4" type="px4" output="screen" required="true"
+              args="-i 1 -d etc/px4 -w start -s etc/init.d/rcS_iris_1">
+            <env name="PX4_SIM_MODEL" value="iris"/>
+            <env name="MAV_SYS_ID" value="1"/>
+        </node>
+        
+        <!-- Spawn in Gazebo -->
+        <node name="spawn_uav1" pkg="gazebo_ros" type="spawn_model"
+              args="-file $(find px4)/../Tools/simulation/gazebo-classic/sitl_gazebo-classic/models/iris/iris.sdf
+                    -urdf -model uav1
+                    -x $(arg uav1_x) -y $(arg uav1_y) -z $(arg uav1_z)
+                    -R 0 -P 0 -Y 0"
+              respawn="false" required="true"/>
+        
+        <!-- MAVROS -->
+        <node name="mavros" pkg="mavros" type="mavros_node"
+              output="screen" required="true">
+            <param name="fcu_url" value="udp://:14540@localhost:14580"/>
+            <param name="fs_serial_url" value="serial:///dev/ttyACM0:115200"/>
+            <param name="fcu_protocol" value="v2.0"/>
+            <param name="target_system_id" value="1"/>
+            <param name="target_component_id" value="1"/>
+            <rosparam command="load" file="$(find dmpc_formation_bridge)/config/mavros.yaml" ns="mavros"/>
+        </node>
+    </group>
+    
+    <!-- UAV 2 -->
+    <group ns="uav2">
+        <node name="px4_2" pkg="px4" type="px4" output="screen" required="true"
+              args="-i 2 -d etc/px4 -w start -s etc/init.d/rcS_iris_2">
+            <env name="PX4_SIM_MODEL" value="iris"/>
+            <env name="MAV_SYS_ID" value="2"/>
+        </node>
+        
+        <node name="spawn_uav2" pkg="gazebo_ros" type="spawn_model"
+              args="-file $(find px4)/../Tools/simulation/gazebo-classic/sitl_gazebo-classic/models/iris/iris.sdf
+                    -urdf -model uav2
+                    -x $(arg uav2_x) -y $(arg uav2_y) -z $(arg uav2_z)
+                    -R 0 -P 0 -Y 0"
+              respawn="false" required="true"/>
+        
+        <node name="mavros" pkg="mavros" type="mavros_node"
+              output="screen" required="true">
+            <param name="fcu_url" value="udp://:14550@localhost:14590"/>
+            <param name="fs_serial_url" value="serial:///dev/ttyACM1:115200"/>
+            <param name="fcu_protocol" value="v2.0"/>
+            <param name="target_system_id" value="2"/>
+            <rosparam command="load" file="$(find dmpc_formation_bridge)/config/mavros.yaml" ns="mavros"/>
+        </node>
+    </group>
+    
+    <!-- UAV 3 -->
+    <group ns="uav3">
+        <node name="px4_3" pkg="px4" type="px4" output="screen" required="true"
+              args="-i 3 -d etc/px4 -w start -s etc/init.d/rcS_iris_3">
+            <env name="PX4_SIM_MODEL" value="iris"/>
+            <env name="MAV_SYS_ID" value="3"/>
+        </node>
+        
+        <node name="spawn_uav3" pkg="gazebo_ros" type="spawn_model"
+              args="-file $(find px4)/../Tools/simulation/gazebo-classic/sitl_gazebo-classic/models/iris/iris.sdf
+                    -urdf -model uav3
+                    -x $(arg uav3_x) -y $(arg uav3_y) -z $(arg uav3_z)
+                    -R 0 -P 0 -Y 0"
+              respawn="false" required="true"/>
+        
+        <node name="mavros" pkg="mavros" type="mavros_node"
+              output="screen" required="true">
+            <param name="fcu_url" value="udp://:14560@localhost:14600"/>
+            <param name="fcu_protocol" value="v2.0"/>
+            <param name="target_system_id" value="3"/>
+            <rosparam command="load" file="$(find dmpc_formation_bridge)/config/mavros.yaml" ns="mavros"/>
+        </node>
+    </group>
+    
+    <!-- UAV 4 -->
+    <group ns="uav4">
+        <node name="px4_4" pkg="px4" type="px4" output="screen" required="true"
+              args="-i 4 -d etc/px4 -w start -s etc/init.d/rcS_iris_4">
+            <env name="PX4_SIM_MODEL" value="iris"/>
+            <env name="MAV_SYS_ID" value="4"/>
+        </node>
+        
+        <node name="spawn_uav4" pkg="gazebo_ros" type="spawn_model"
+              args="-file $(find px4)/../Tools/simulation/gazebo-classic/sitl_gazebo-classic/models/iris/iris.sdf
+                    -urdf -model uav4
+                    -x $(arg uav4_x) -y $(arg uav4_y) -z $(arg uav4_z)
+                    -R 0 -P 0 -Y 0"
+              respawn="false" required="true"/>
+        
+        <node name="mavros" pkg="mavros" type="mavros_node"
+              output="screen" required="true">
+            <param name="fcu_url" value="udp://:14570@localhost:14610"/>
+            <param name="fcu_protocol" value="v2.0"/>
+            <param name="target_system_id" value="4"/>
+            <rosparam command="load" file="$(find dmpc_formation_bridge)/config/mavros.yaml" ns="mavros"/>
+        </node>
+    </group>
+    
+    <!-- ==================== DMPC CONTROLLER ==================== -->
+    <include file="$(find dmpc_formation_bridge)/launch/formation_bridge.launch"/>
+    
+</launch>

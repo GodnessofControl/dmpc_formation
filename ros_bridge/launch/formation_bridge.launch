@@ -1,0 +1,55 @@
+<launch>
+    <!-- DMPC Formation Bridge Node -->
+    
+    <!-- Number of UAVs -->
+    <arg name="n_uavs" default="4"/>
+    <arg name="uav_namespace" default="uav"/>
+    
+    <!-- MPC Parameters -->
+    <arg name="mpc_rate" default="1.0"/>  <!-- Hz -->
+    <arg name="sigma_L" default="0.15"/>
+    <arg name="sigma_D" default="0.20"/>
+    
+    <!-- Formation offsets (relative to leader) -->
+    <arg name="formation_dr12_x" default="10.0"/>
+    <arg name="formation_dr12_y" default="27.0"/>
+    <arg name="formation_dr12_z" default="0.0"/>
+    
+    <arg name="formation_dr13_x" default="20.0"/>
+    <arg name="formation_dr13_y" default="-22.0"/>
+    <arg name="formation_dr13_z" default="0.0"/>
+    
+    <arg name="formation_dr14_x" default="30.0"/>
+    <arg name="formation_dr14_y" default="10.0"/>
+    <arg name="formation_dr14_z" default="0.0"/>
+    
+    <!-- MAVROS config -->
+    <arg name="use_mavros" default="true"/>
+    <arg name="mavros_fcu_url" default="udp://:14540@"/>
+    
+    <!-- Load MAVROS params -->
+    <rosparam file="$(find dmpc_formation_bridge)/config/mavros.yaml" ns="mavros"/>
+    
+    <!-- Start MAVROS for each UAV (simplified - can use multi_uav.launch) -->
+    <!-- For 4 UAVs, you would start 4 MAVROS instances on different ports -->
+    
+    <!-- DMPC Bridge Node -->
+    <node name="dmpc_formation_bridge" pkg="dmpc_formation_bridge" type="dmpc_bridge_node.py"
+          output="screen" required="true">
+        <param name="n_uavs" value="$(arg n_uavs)"/>
+        <param name="uav_namespace" value="$(arg uav_namespace)"/>
+        <param name="mpc_rate" value="$(arg mpc_rate)"/>
+        <param name="sigma_L" value="$(arg sigma_L)"/>
+        <param name="sigma_D" value="$(arg sigma_D)"/>
+        <param name="formation_dr12_x" value="$(arg formation_dr12_x)"/>
+        <param name="formation_dr12_y" value="$(arg formation_dr12_y)"/>
+        <param name="formation_dr12_z" value="$(arg formation_dr12_z)"/>
+        <param name="formation_dr13_x" value="$(arg formation_dr13_x)"/>
+        <param name="formation_dr13_y" value="$(arg formation_dr13_y)"/>
+        <param name="formation_dr13_z" value="$(arg formation_dr13_z)"/>
+        <param name="formation_dr14_x" value="$(arg formation_dr14_x)"/>
+        <param name="formation_dr14_y" value="$(arg formation_dr14_y)"/>
+        <param name="formation_dr14_z" value="$(arg formation_dr14_z)"/>
+        <param name="use_mavros" value="$(arg use_mavros)"/>
+    </node>
+</launch>

@@ -1,0 +1,24 @@
+<launch>
+    <!-- Simplified PX4 Multi-UAV Launch using sitl_multiple_run.sh -->
+    
+    <arg name="n_uavs" default="4"/>
+    <arg name="world" default="empty"/>
+    <arg name="gui" default="true"/>
+    
+    <!-- MAVROS base port -->
+    <arg name="mavros_base_port" default="14560"/>
+    <arg name="mavros_tcp_base_port" default="4560"/>
+    
+    <!-- Set environment -->
+    <env name="PX4_SIM_MODEL" value="iris"/>
+    <env name="ROS_PACKAGE_PATH" value="/home/demo/PX4-Autopilot:$(env ROS_PACKAGE_PATH)"/>
+    
+    <!-- Launch PX4 instances via the provided script -->
+    <node name="multi_uav_start" pkg="dmpc_formation_bridge" type="start_px4_multi.sh"
+          launch-prefix="bash -c" output="screen"/>
+    
+    <!-- After a delay, launch MAVROS for each UAV -->
+    <node name="mavros_start" pkg="dmpc_formation_bridge" type="start_mavros.sh"
+          launch-prefix="bash -c" output="screen"/>
+    
+</launch>
