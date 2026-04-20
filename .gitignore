@@ -1,7 +1,7 @@
+*.csv
+*.png
 __pycache__/
 *.pyc
-*.pyo
 *.egg-info/
-dist/
 build/
-.eggs/
+dist/

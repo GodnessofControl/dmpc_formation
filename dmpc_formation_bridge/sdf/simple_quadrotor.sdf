@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!-- Simple Quadrotor SDF for visualization - no physics plugins -->
+<sdf version="1.6">
+  <model name="quadrotor_simple">
+    <static>false</static>
+    <pose>0 0 0 0 0 0</pose>
+    
+    <link name="base_link">
+      <inertial>
+        <mass>1.5</mass>
+        <inertia>
+          <ixx>0.01</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>0.01</iyy><iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      
+      <collision name="base_collision">
+        <geometry><box><size>0.4 0.4 0.1</size></box></geometry>
+      </collision>
+      
+      <visual name="base_visual">
+        <geometry><box><size>0.4 0.4 0.1</size></box></geometry>
+        <material>
+          <ambient>0.5 0.5 0.9 1</ambient>
+          <diffuse>0.5 0.5 0.9 1</diffuse>
+        </material>
+      </visual>
+    </link>
+    
+    <!-- Arms -->
+    <link name="arm_fl">
+      <pose>0.2 0.2 0 0 0 0</pose>
+      <inertial><mass>0.05</mass><inertia><ixx>0.001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.001</iyy><iyz>0</iyz><izz>0.001</izz></inertia></inertial>
+      <collision name="arm_fl_col"><geometry><cylinder radius="0.015" length="0.28"/></cylinder></geometry></collision>
+      <visual name="arm_fl_vis"><geometry><cylinder radius="0.015" length="0.28"/></cylinder></visual>
+      <material><ambient>0.4 0.4 0.4 1</ambient><diffuse>0.4 0.4 0.4 1</diffuse></material>
+    </link>
+    
+    <link name="arm_fr">
+      <pose>0.2 -0.2 0 0 0 0</pose>
+      <inertial><mass>0.05</mass><inertia><ixx>0.001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.001</iyy><iyz>0</iyz><izz>0.001</izz></inertia></inertial>
+      <collision name="arm_fr_col"><geometry><cylinder radius="0.015" length="0.28"/></cylinder></geometry></collision>
+      <visual name="arm_fr_vis"><geometry><cylinder radius="0.015" length="0.28"/></cylinder></visual>
+      <material><ambient>0.4 0.4 0.4 1</ambient><diffuse>0.4 0.4 0.4 1</diffuse></material>
+    </link>
+    
+    <link name="arm_bl">
+      <pose>-0.2 0.2 0 0 0 0</pose>
+      <inertial><mass>0.05</mass><inertia><ixx>0.001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.001</iyy><iyz>0</iyz><izz>0.001</izz></inertia></inertial>
+      <collision name="arm_bl_col"><geometry><cylinder radius="0.015" length="0.28"/></cylinder></geometry></collision>
+      <visual name="arm_bl_vis"><geometry><cylinder radius="0.015" length="0.28"/></cylinder></visual>
+      <material><ambient>0.4 0.4 0.4 1</ambient><diffuse>0.4 0.4 0.4 1</diffuse></material>
+    </link>
+    
+    <link name="arm_br">
+      <pose>-0.2 -0.2 0 0 0 0</pose>
+      <inertial><mass>0.05</mass><inertia><ixx>0.001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.001</iyy><iyz>0</iyz><izz>0.001</izz></inertia></inertial>
+      <collision name="arm_br_col"><geometry><cylinder radius="0.015" length="0.28"/></cylinder></collision>
+      <visual name="arm_br_vis"><geometry><cylinder radius="0.015" length="0.28"/></cylinder></visual>
+      <material><ambient>0.4 0.4 0.4 1</ambient><diffuse>0.4 0.4 0.4 1</diffuse></material>
+    </link>
+    
+    <!-- Motor spheres -->
+    <link name="motor_fl"><pose>0.3 0.3 0 0 0 0</pose><inertial><mass>0.02</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial><visual><geometry><sphere radius="0.06"/></sphere></visual><material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material></link>
+    <link name="motor_fr"><pose>0.3 -0.3 0 0 0 0</pose><inertial><mass>0.02</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial><visual><geometry><sphere radius="0.06"/></sphere></visual><material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material></link>
+    <link name="motor_bl"><pose>-0.3 0.3 0 0 0 0</pose><inertial><mass>0.02</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial><visual><geometry><sphere radius="0.06"/></sphere></visual><material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material></link>
+    <link name="motor_br"><pose>-0.3 -0.3 0 0 0 0</pose><inertial><mass>0.02</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial><visual><geometry><sphere radius="0.06"/></sphere></visual><material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material></link>
+    
+    <!-- Joints -->
+    <joint name="base_to_arm_fl" type="fixed"><parent>base_link</parent><child>arm_fl</child></joint>
+    <joint name="base_to_arm_fr" type="fixed"><parent>base_link</parent><child>arm_fr</child></joint>
+    <joint name="base_to_arm_bl" type="fixed"><parent>base_link</parent><child>arm_bl</child></joint>
+    <joint name="base_to_arm_br" type="fixed"><parent>base_link</parent><child>arm_br</child></joint>
+    <joint name="arm_to_motor_fl" type="fixed"><parent>arm_fl</parent><child>motor_fl</child></joint>
+    <joint name="arm_to_motor_fr" type="fixed"><parent>arm_fr</parent><child>motor_fr</child></joint>
+    <joint name="arm_to_motor_bl" type="fixed"><parent>arm_bl</parent><child>motor_bl</child></joint>
+    <joint name="arm_to_motor_br" type="fixed"><parent>arm_br</parent><child>motor_br</child></joint>
+  </model>
+</sdf>

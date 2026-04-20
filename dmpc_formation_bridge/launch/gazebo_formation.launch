@@ -1,0 +1,34 @@
+<launch>
+  <!-- Gazebo with ROS integration for DMPC Formation -->
+  
+  <!-- Start roscore -->
+  <node name="roscore" pkg="roscore" type="roscore" output="screen"/>
+  
+  <!-- Gazebo server with ROS API -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="/usr/share/gazebo-11/worlds/empty.world"/>
+    <arg name="gui" value="true"/>
+    <arg name="verbose" value="false"/>
+    <arg name="server_required" value="true"/>
+  </include>
+  
+  <!-- Spawn 4 UAVs -->
+  <node name="spawn_uavs" pkg="gazebo_ros" type="spawn_model"
+        args="-file $(find dmpc_formation_bridge)/sdf/quadrotor_basic.sdf -sdf -model uav1 -x 0 -y 0 -z 0.5 -Y 0"
+        respawn="false" output="screen"/>
+  <node name="spawn_uav2" pkg="gazebo_ros" type="spawn_model"
+        args="-file $(find dmpc_formation_bridge)/sdf/quadrotor_basic.sdf -sdf -model uav2 -x -10 -y -27 -z 0.5 -Y 0"
+        respawn="false" output="screen"/>
+  <node name="spawn_uav3" pkg="gazebo_ros" type="spawn_model"
+        args="-file $(find dmpc_formation_bridge)/sdf/quadrotor_basic.sdf -sdf -model uav3 -x -20 -y 22 -z 0.5 -Y 0"
+        respawn="false" output="screen"/>
+  <node name="spawn_uav4" pkg="gazebo_ros" type="spawn_model"
+        args="-file $(find dmpc_formation_bridge)/sdf/quadrotor_basic.sdf -sdf -model uav4 -x -30 -y -10 -z 0.5 -Y 0"
+        respawn="false" output="screen"/>
+  
+  <!-- Formation visualizer -->
+  <node name="formation_visualizer" pkg="dmpc_formation_bridge" type="formation_gazebo_visualizer"
+        args="--csv /home/demo/.openclaw/workspace/dmpc_formation/4uav_trajectory.csv --rate 5"
+        output="screen" required="false" launch-prefix=""/>
+        
+</launch>
